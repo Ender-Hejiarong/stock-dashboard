@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ender-hejiarong.github.io/stock-dashboard/sitemap.xml
