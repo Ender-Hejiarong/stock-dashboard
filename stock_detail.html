@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; connect-src 'self' https://push2ex.eastmoney.com https://push2.eastmoney.com https://push2his.eastmoney.com https://datacenter-web.eastmoney.com https://web.ifzq.gtimg.cn; base-uri 'none'; object-src 'none'; frame-ancestors 'none';">
+    <title>股票详情分析</title>
+    <link rel="stylesheet" href="detail.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <main class="detail-page">
+        <header class="detail-header">
+            <div>
+                <p class="eyebrow">A股 / 涨停分析</p>
+                <h1><span id="stockName">股票详情</span> <small id="stockCode"></small></h1>
+                <p class="trade-date">交易日：<span id="tradeDate">-</span> · 涨停池：东方财富 · K线：腾讯行情</p>
+            </div>
+            <button class="close-button" id="closeButton" title="关闭详情页">关闭</button>
+        </header>
+        <section class="quote-grid" aria-label="行情摘要">
+            <div><span>涨停价</span><strong id="price">-</strong></div>
+            <div><span>涨幅</span><strong id="change">-</strong></div>
+                <div><span>涨停统计</span><strong id="days">-</strong></div>
+            <div><span>成交额</span><strong id="amount">-</strong></div>
+        </section>
+        <nav class="tabs" aria-label="图表周期">
+            <button class="tab active" data-type="intraday">分时</button>
+            <button class="tab" data-type="daily">日K</button>
+            <button class="tab" data-type="weekly">周K</button>
+            <button class="tab" data-type="monthly">月K</button>
+        </nav>
+        <section class="chart-panel">
+            <div class="chart-title"><strong id="chartTitle">分时走势</strong><span id="status">正在加载...</span></div>
+            <div id="detailChart"></div>
+        </section>
+        <section class="billboard-panel">
+            <div class="chart-title"><strong>龙虎榜</strong><span><span id="billboardStatus">正在加载...</span> · <a id="billboardLink" target="_blank" rel="noopener noreferrer">查看买方前五</a></span></div>
+            <div class="billboard-grid">
+                <div><span>上榜原因</span><strong id="billboardReason">-</strong></div>
+                <div><span>净买入</span><strong id="billboardNet">-</strong></div>
+                <div><span>买入额</span><strong id="billboardBuy">-</strong></div>
+                <div><span>卖出额</span><strong id="billboardSell">-</strong></div>
+            </div>
+        </section>
+    </main>
+    <script src="detail.js"></script>
+</body>
+</html>

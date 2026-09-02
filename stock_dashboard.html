@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; connect-src 'self' https://push2ex.eastmoney.com https://push2.eastmoney.com https://push2his.eastmoney.com https://datacenter-web.eastmoney.com https://web.ifzq.gtimg.cn; base-uri 'none'; object-src 'none'; frame-ancestors 'none';">
+    <title>A股涨停股票分析系统</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- ECharts 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>📈 A股涨停股票实时分析系统</h1>
+            <p>查看今日涨停股票、分时图、K线和连续涨停天数</p>
+        </header>
+
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <div class="control-group">
+                <label for="dateInput">选择日期：</label>
+                <input type="date" id="dateInput">
+            </div>
+            <div class="control-group">
+                <button id="refreshBtn">🔄 刷新数据</button>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="main-content">
+            <!-- 左侧：股票列表 -->
+            <div class="left-panel">
+                <div class="panel-header">
+                    <h2>涨停股票列表</h2>
+                    <span class="stock-count" id="stockCount">加载中...</span>
+                </div>
+                <div class="board-filters" id="boardFilters" role="tablist" aria-label="连板筛选">
+                    <button class="board-filter active" data-board="all" role="tab">全部</button>
+                </div>
+                <div class="stock-list" id="stockList">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 底部信息 -->
+        <footer class="footer">
+            <p>数据来源：东方财富公开行情 | 更新时间：<span id="updateTime">-</span></p>
+            <p class="disclaimer">仅供学习参考，不构成投资建议</p>
+        </footer>
+    </div>
+
+    <!-- 加载脚本 -->
+    <script src="script.js"></script>
+</body>
+</html>
