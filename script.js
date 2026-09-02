@@ -52,6 +52,7 @@ async function refreshData() {
         allStocks = stocks;
         
         displayStockList(stocks);
+        enrichBoardStats(stocks, dateInput);
         
     } catch (error) {
         console.error('获取数据失败:', error);
@@ -74,13 +75,20 @@ async function fetchLimitUpStocks(date) {
             price: Number(row.p) / 1000,
             change: Number(row.zdp),
             volume: Number(row.amount) / (Number(row.p) / 1000),
-            days: null,
-            periodDays: null
+            days: row.zttj?.ct || null,
+            periodDays: row.zttj?.days || null
         }));
-    return Promise.all(stocks.map(async stock => ({
+    return stocks;
+}
+
+async function enrichBoardStats(stocks, date) {
+    const updated = await Promise.all(stocks.map(async stock => ({
         ...stock,
         ...await calculateBoardStats(stock, date)
     })));
+    if (allStocks !== stocks) return;
+    allStocks = updated;
+    displayStockList(updated);
 }
 
 async function calculateBoardStats(stock, date) {
@@ -108,7 +116,7 @@ async function calculateBoardStats(stock, date) {
         return { days, periodDays: rows.length - firstIndex };
     } catch (error) {
         console.error(`计算 ${stock.code} 连板统计失败:`, error);
-        return { days: null, periodDays: null };
+        return {};
     }
 }
 
