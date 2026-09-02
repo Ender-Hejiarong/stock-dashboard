@@ -103,16 +103,23 @@ async function calculateBoardStats(stock, date) {
             const close = Number(row[2]);
             return previousClose > 0 && (close - previousClose) / previousClose * 100 >= threshold - 0.15;
         });
-        const windows = [5, 10, 20].filter(size => rows.length >= size).map(size => ({
-            periodDays: size,
-            days: isLimitUp.slice(-size).filter(Boolean).length
-        })).filter(item => item.days > 0);
-        if (!windows.length) return { days: null, periodDays: null };
-        windows.sort((left, right) => {
-            const density = right.days / right.periodDays - left.days / left.periodDays;
-            return density || right.days - left.days || left.periodDays - right.periodDays;
-        });
-        return windows[0];
+        const latestIndex = isLimitUp.lastIndexOf(true);
+        if (latestIndex < 0) return { days: null, periodDays: null };
+        let firstIndex = latestIndex;
+        let skippedDays = 0;
+        for (let index = latestIndex - 1; index >= 0; index--) {
+            if (isLimitUp[index]) {
+                firstIndex = index;
+                continue;
+            }
+            skippedDays++;
+            if (skippedDays > 1) break;
+            firstIndex = index;
+        }
+        return {
+            days: isLimitUp.slice(firstIndex, latestIndex + 1).filter(Boolean).length,
+            periodDays: latestIndex - firstIndex + 1
+        };
     } catch (error) {
         console.error(`计算 ${stock.code} 连板统计失败:`, error);
         return {};
