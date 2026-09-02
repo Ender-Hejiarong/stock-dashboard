@@ -107,15 +107,17 @@ async function calculateBoardStats(stock, date) {
         if (latestIndex < 0) return { days: null, periodDays: null };
         let firstIndex = latestIndex;
         let skippedDays = 0;
+        let previousLimitUpFound = false;
         for (let index = latestIndex - 1; index >= 0; index--) {
             if (isLimitUp[index]) {
                 firstIndex = index;
+                previousLimitUpFound = true;
                 continue;
             }
             skippedDays++;
             if (skippedDays > 1) break;
-            firstIndex = index;
         }
+        if (!previousLimitUpFound) return { days: 1, periodDays: 1 };
         return {
             days: isLimitUp.slice(firstIndex, latestIndex + 1).filter(Boolean).length,
             periodDays: latestIndex - firstIndex + 1
