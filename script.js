@@ -92,15 +92,17 @@ async function enrichBoardStats(stocks, date) {
 }
 
 async function calculateBoardStats(stock, date) {
-    const endDate = new Date(date);
-    endDate.setDate(endDate.getDate() + 1);
-    const end = endDate.toISOString().slice(0, 10).replaceAll('-', '');
-    const url = `https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=${getEastmoneyCode(stock.code)}&klt=101&fqt=0&beg=20200101&end=${end}&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61`;
+    const url = `https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=${stock.code},day,,,500,`;
     try {
         const result = await fetch(url).then(response => response.json());
-        const rows = (result.data?.klines || []).slice(-20);
+        const rows = (result.data?.[stock.code]?.day || []).filter(row => row[0] <= date).slice(-30);
         const threshold = getLimitUpThreshold(stock.code, stock.name);
-        const isLimitUp = rows.map(row => Number(row.split(',')[8]) >= threshold - 0.15);
+        const isLimitUp = rows.map((row, index) => {
+            if (index === 0) return false;
+            const previousClose = Number(rows[index - 1][2]);
+            const close = Number(row[2]);
+            return previousClose > 0 && (close - previousClose) / previousClose * 100 >= threshold - 0.15;
+        });
         const windows = [5, 10, 20].filter(size => rows.length >= size).map(size => ({
             periodDays: size,
             days: isLimitUp.slice(-size).filter(Boolean).length
