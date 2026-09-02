@@ -75,15 +75,18 @@ async function fetchLimitUpStocks(date) {
             price: Number(row.p) / 1000,
             change: Number(row.zdp),
             volume: Number(row.amount) / (Number(row.p) / 1000),
-            days: row.zttj?.ct || null,
-            periodDays: row.zttj?.days || null
+            days: null,
+            periodDays: null,
+            boardStatsPending: true
         }));
     return stocks;
 }
 
 async function enrichBoardStats(stocks, date) {
+    displayStockList(stocks);
     const updated = await Promise.all(stocks.map(async stock => ({
         ...stock,
+        boardStatsPending: false,
         ...await calculateBoardStats(stock, date)
     })));
     if (allStocks !== stocks) return;
@@ -155,7 +158,7 @@ function displayStockList(stocks) {
             <div class="stock-item-info">
                 <span class="stock-item-price">¥${stock.price.toFixed(2)}</span>
                 <span class="stock-item-change">${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%</span>
-                <span class="stock-item-days">${stock.periodDays && stock.days ? `${stock.periodDays}天${stock.days}板` : '--'}</span>
+                <span class="stock-item-days">${stock.periodDays && stock.days ? `${stock.periodDays}天${stock.days}板` : stock.boardStatsPending ? '统计中...' : '--'}</span>
             </div>
         </a>
     `).join('');
