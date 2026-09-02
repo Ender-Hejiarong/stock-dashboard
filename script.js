@@ -100,20 +100,17 @@ async function calculateBoardStats(stock, date) {
         const result = await fetch(url).then(response => response.json());
         const rows = (result.data?.klines || []).slice(-20);
         const threshold = getLimitUpThreshold(stock.code, stock.name);
-        const limitUpIndexes = rows.reduce((indexes, row, index) => {
-            if (Number(row.split(',')[8]) >= threshold - 0.15) indexes.push(index);
-            return indexes;
-        }, []);
-        if (!limitUpIndexes.length) return { days: null, periodDays: null };
-
-        // 从最近一次涨停向前追踪同一活跃区间，允许中间间隔一个交易日。
-        let firstIndex = limitUpIndexes[limitUpIndexes.length - 1];
-        for (let index = limitUpIndexes.length - 2; index >= 0; index--) {
-            if (limitUpIndexes[index + 1] - limitUpIndexes[index] > 2) break;
-            firstIndex = limitUpIndexes[index];
-        }
-        const days = limitUpIndexes.filter(index => index >= firstIndex).length;
-        return { days, periodDays: rows.length - firstIndex };
+        const isLimitUp = rows.map(row => Number(row.split(',')[8]) >= threshold - 0.15);
+        const windows = [5, 10, 20].filter(size => rows.length >= size).map(size => ({
+            periodDays: size,
+            days: isLimitUp.slice(-size).filter(Boolean).length
+        })).filter(item => item.days > 0);
+        if (!windows.length) return { days: null, periodDays: null };
+        windows.sort((left, right) => {
+            const density = right.days / right.periodDays - left.days / left.periodDays;
+            return density || right.days - left.days || left.periodDays - right.periodDays;
+        });
+        return windows[0];
     } catch (error) {
         console.error(`计算 ${stock.code} 连板统计失败:`, error);
         return {};
