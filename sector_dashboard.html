@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A股板块龙头、涨停池和跟随股实时分析。">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://push2.eastmoney.com https://push2ex.eastmoney.com https://push2delay.eastmoney.com; base-uri 'none'; object-src 'none'; frame-ancestors 'none';">
+    <title>A股板块雷达</title>
+    <link rel="stylesheet" href="sector_dashboard.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand"><span class="brand-mark">◒</span><div><strong>板块雷达</strong><small>SECTOR PULSE / A-SHARE</small></div></div>
+            <div class="top-actions"><a class="back-link" href="stock_dashboard.html">涨停列表</a><span class="market-state"><i></i><span id="marketState">连接行情中</span></span><button class="icon-button" id="refreshBtn" title="刷新数据" aria-label="刷新数据">↻</button></div>
+        </header>
+        <main>
+            <section class="hero-row">
+                <div><p class="eyebrow">LIVE MARKET MAP <span id="updateTime">--:--:--</span></p><h1>今天，资金<br><em>正在往哪里走？</em></h1><p class="hero-copy">以真实行情、涨停池和板块成分股交叉验证，快速找到主线、龙头与跟随机会。</p></div>
+                <div class="session-card"><span>交易日</span><strong id="tradeDate">加载中</strong><span id="dataStatus">正在同步公开行情</span></div>
+            </section>
+            <section class="kpi-strip"><div><span>板块总览</span><strong id="sectorCount">--</strong><small>行业 + 概念</small></div><div><span>涨停家数</span><strong id="limitCount">--</strong><small>东方财富涨停池</small></div><div><span>强势主线</span><strong id="hotSector">--</strong><small>按涨幅与涨停密度排序</small></div><div><span>数据时间</span><strong id="dataClock">--:--</strong><small>页面打开时实时拉取</small></div></section>
+            <section class="workspace">
+                <aside class="sector-panel"><div class="section-heading"><div><span class="section-kicker">01 / THEMES</span><h2>板块热力</h2></div><select id="sectorType" aria-label="板块类型"><option value="all">行业 + 概念</option><option value="industry">行业板块</option><option value="concept">概念板块</option></select></div><div class="sector-list" id="sectorList"><div class="empty">正在读取板块行情...</div></div></aside>
+                <section class="detail-panel"><div class="detail-heading"><div><span class="section-kicker">02 / LEADERSHIP</span><h2 id="detailTitle">选择一个板块</h2><p id="detailSubtitle">板块大盘与成分股会在这里展开</p></div><span class="verified" id="detailBadge">待选择</span></div><div class="sector-metrics" id="sectorMetrics"><div><span>板块涨幅</span><strong>--</strong></div><div><span>上涨家数</span><strong>--</strong></div><div><span>涨停家数</span><strong>--</strong></div><div><span>领涨股</span><strong>--</strong></div></div><div class="leader-grid"><div class="leader-block"><div class="block-title"><span>龙头候选</span><small>涨幅 / 涨停 / 成交额综合</small></div><div id="leaderList" class="stock-table"><div class="empty">选择板块后加载</div></div></div><div class="leader-block followers"><div class="block-title"><span>板块跟随股</span><small>成分股实时表现</small></div><div id="followerList" class="stock-table"><div class="empty">选择板块后加载</div></div></div></div></section>
+            </section>
+            <section class="ai-panel"><div class="ai-label"><span class="ai-orb">✦</span><div><span class="section-kicker">03 / AI BRIEFING</span><h2>主线诊断</h2></div></div><div class="ai-content"><p id="aiText">选择板块后，系统会基于实时涨幅、涨停密度、上涨家数和成交额生成可追溯的盘面摘要。</p><div class="ai-meta"><span id="aiSource">等待行情数据</span><button id="aiRefresh" disabled>重新分析 ↗</button></div></div></section>
+        </main>
+        <footer>数据源：东方财富公开行情接口 · 仅作信息展示，不构成投资建议 · 接口异常时不显示模拟数据</footer>
+    </div>
+    <script src="sector_dashboard.js?v=20260903-5"></script>
+</body>
+</html>

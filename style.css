@@ -90,6 +90,21 @@ html, body {
     transition: transform 0.2s;
 }
 
+.sector-link {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid #667eea;
+    border-radius: 4px;
+    color: #667eea;
+    background: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.sector-link:hover {
+    background: #f4f5ff;
+}
+
 .control-group button:hover {
     transform: translateY(-2px);
 }
@@ -220,6 +235,14 @@ html, body {
 .stock-item-price {
     color: #667eea;
     font-weight: 600;
+}
+
+.stock-item-price small {
+    display: block;
+    color: #888;
+    font-size: 10px;
+    font-weight: 400;
+    margin-top: 3px;
 }
 
 .stock-item-change {

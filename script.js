@@ -57,8 +57,14 @@ async function refreshData() {
     } catch (error) {
         console.error('获取数据失败:', error);
         document.getElementById('stockCount').textContent = '不可用';
-        document.getElementById('stockList').innerHTML = `<div class="loading">${error.message}，未显示伪造数据。</div>`;
+        document.getElementById('stockList').innerHTML = `<div class="loading">${escapeHtml(networkErrorMessage(error))}，未显示伪造数据。</div>`;
     }
+}
+
+function networkErrorMessage(error) {
+    if (location.protocol === 'file:') return '请通过 HTTP 服务器打开页面（不要直接双击 HTML）';
+    if (error.name === 'TypeError' || /Failed to fetch/i.test(error.message)) return '行情接口连接失败，请稍后重试';
+    return error.message || '行情接口连接失败';
 }
 
 // 获取涨停股票列表
@@ -68,18 +74,40 @@ async function fetchLimitUpStocks(date) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`涨停池接口返回 ${response.status}`);
     const result = await response.json();
-    const stocks = (result.data?.pool || []).filter(row => Number(row.p) > 0)
-        .map(row => ({
-            code: `${row.m === 1 ? 'sh' : 'sz'}${row.c}`,
-            name: row.n,
-            price: Number(row.p) / 1000,
-            change: Number(row.zdp),
-            volume: Number(row.amount) / (Number(row.p) / 1000),
-            days: null,
-            periodDays: null,
-            boardStatsPending: true
+    const rows = (result.data?.pool || []).filter(row => Number(row.p) > 0);
+    const stocks = [];
+    for (let index = 0; index < rows.length; index += 5) {
+        const batch = await Promise.all(rows.slice(index, index + 5).map(async row => {
+            const code = `${row.m === 1 ? 'sh' : 'sz'}${row.c}`;
+            const currentPrice = Number(row.p) / 1000;
+            return {
+                code,
+                name: row.n,
+                price: await fetchLimitPrice(code, row.n, currentPrice, Number(row.zdp)).catch(() => null),
+                currentPrice,
+                change: Number(row.zdp),
+                volume: Number(row.amount) / currentPrice,
+                days: null,
+                periodDays: null,
+                boardStatsPending: true
+            };
         }));
+        stocks.push(...batch);
+    }
     return stocks;
+}
+
+async function fetchLimitPrice(code, name, currentPrice, change) {
+    let previousClose;
+    try {
+        const result = await fetch(`https://push2.eastmoney.com/api/qt/stock/get?secid=${getEastmoneyCode(code)}&fields=f43,f60`).then(response => response.json());
+        previousClose = Number(result.data?.f60) / 100;
+    } catch (_) {
+        previousClose = currentPrice / (1 + change / 100);
+    }
+    if (!Number.isFinite(previousClose) || previousClose <= 0) return null;
+    const threshold = getLimitUpThreshold(code, name);
+    return Math.round(previousClose * (1 + threshold / 100) * 100) / 100;
 }
 
 async function enrichBoardStats(stocks, date) {
@@ -156,7 +184,7 @@ function displayStockList(stocks) {
             <div class="stock-item-name">${escapeHtml(stock.name)}</div>
             <div class="stock-item-code">${escapeHtml(stock.code)}</div>
             <div class="stock-item-info">
-                <span class="stock-item-price">¥${stock.price.toFixed(2)}</span>
+                <span class="stock-item-price">涨停 ¥${Number.isFinite(stock.price) ? stock.price.toFixed(2) : '--'}<small>现价 ¥${stock.currentPrice.toFixed(2)}</small></span>
                 <span class="stock-item-change">${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%</span>
                 <span class="stock-item-days">${stock.periodDays && stock.days ? `${stock.periodDays}天${stock.days}板` : stock.boardStatsPending ? '统计中...' : '--'}</span>
             </div>
@@ -197,6 +225,7 @@ function getStockDetailUrl(stock) {
         name: stock.name,
         date,
         price: stock.price,
+        currentPrice: stock.currentPrice,
         change: stock.change,
         days: stock.days || '',
         periodDays: stock.periodDays || '',

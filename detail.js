@@ -4,6 +4,7 @@ const stock = {
     name: params.get('name') || '股票详情',
     date: params.get('date') || new Date().toISOString().slice(0, 10),
     price: Number(params.get('price')),
+    currentPrice: Number(params.get('currentPrice')),
     change: Number(params.get('change')),
     days: params.get('days'),
     periodDays: params.get('periodDays'),
@@ -18,6 +19,7 @@ document.getElementById('stockCode').textContent = stock.code;
 document.getElementById('tradeDate').textContent = stock.date;
 document.getElementById('closeButton').addEventListener('click', () => window.close());
 document.getElementById('price').textContent = stock.price ? `¥${stock.price.toFixed(2)}` : '-';
+document.getElementById('currentPrice').textContent = stock.currentPrice ? `¥${stock.currentPrice.toFixed(2)}` : '-';
 document.getElementById('change').textContent = Number.isFinite(stock.change) && stock.change ? `${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%` : '-';
 document.getElementById('days').textContent = stock.days && stock.periodDays ? `${stock.periodDays}天${stock.days}板` : '暂无数据';
 document.getElementById('amount').textContent = stock.volume ? `${(stock.volume * stock.price / 100000000).toFixed(2)}亿元` : '-';
@@ -53,9 +55,15 @@ async function loadChart(type) {
         }
         setStatus(`更新于 ${new Date().toLocaleTimeString('zh-CN')}`);
     } catch (error) {
-        setStatus(error.message);
+        setStatus(networkErrorMessage(error));
         chart.clear();
     }
+}
+
+function networkErrorMessage(error) {
+    if (location.protocol === 'file:') return '请通过 HTTP 服务器打开页面（不要直接双击 HTML）';
+    if (error.name === 'TypeError' || /Failed to fetch/i.test(error.message)) return '行情接口连接失败，请稍后重试';
+    return error.message || '行情接口连接失败';
 }
 
 async function loadIntraday() {

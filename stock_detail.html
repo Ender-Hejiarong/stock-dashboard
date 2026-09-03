@@ -16,10 +16,14 @@
                 <h1><span id="stockName">股票详情</span> <small id="stockCode"></small></h1>
                 <p class="trade-date">交易日：<span id="tradeDate">-</span> · 涨停池：东方财富 · K线：腾讯行情</p>
             </div>
-            <button class="close-button" id="closeButton" title="关闭详情页">关闭</button>
+            <div class="header-actions">
+                <a class="sector-button" href="sector_dashboard.html" title="打开板块雷达">板块</a>
+                <button class="close-button" id="closeButton" title="关闭详情页">关闭</button>
+            </div>
         </header>
         <section class="quote-grid" aria-label="行情摘要">
             <div><span>涨停价</span><strong id="price">-</strong></div>
+            <div><span>当前价</span><strong id="currentPrice">-</strong></div>
             <div><span>涨幅</span><strong id="change">-</strong></div>
                 <div><span>涨停统计</span><strong id="days">-</strong></div>
             <div><span>成交额</span><strong id="amount">-</strong></div>
