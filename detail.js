@@ -24,6 +24,10 @@ document.getElementById('change').textContent = Number.isFinite(stock.change) &&
 document.getElementById('days').textContent = stock.days && stock.periodDays ? `${stock.periodDays}天${stock.days}板` : '暂无数据';
 document.getElementById('amount').textContent = stock.volume ? `${(stock.volume * stock.price / 100000000).toFixed(2)}亿元` : '-';
 document.getElementById('billboardLink').href = `https://data.eastmoney.com/stock/lhb,${stock.code.slice(2)}.html`;
+document.getElementById('insightBoard').textContent = stock.days && stock.periodDays ? `${stock.periodDays}天${stock.days}板` : '暂无数据';
+document.getElementById('insightChange').textContent = Number.isFinite(stock.change) ? `${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%` : '-';
+document.getElementById('insightAmount').textContent = stock.volume ? `${(stock.volume * stock.price / 100000000).toFixed(2)}亿元` : '-';
+document.getElementById('thsLink').href = `https://stockpage.10jqka.com.cn/${stock.code.slice(2)}/`;
 loadBillboard();
 
 document.querySelectorAll('.tab').forEach(tab => {

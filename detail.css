@@ -26,6 +26,13 @@ h1 small { margin-left: 12px; color: #89929b; font-size: 14px; font-weight: 400;
 .billboard-grid span { color: #89929b; font-size: 12px; }
 .billboard-grid strong { color: #343a40; font-size: 15px; font-weight: 600; }
 .chart-title a { color: #c83e34; text-decoration: none; font-size: 12px; }
+.insight-panel { margin-top: 18px; padding: 18px 20px; background: #fff; border: 1px solid #e0e4e8; }
+.insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 14px; background: #e0e4e8; }
+.insight-grid div { display: flex; flex-direction: column; gap: 8px; min-height: 72px; padding: 14px 16px; background: #fff; }
+.insight-grid span { color: #89929b; font-size: 12px; }
+.insight-grid strong { color: #c83e34; font-size: 17px; font-weight: 600; }
+.insight-actions { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-top: 14px; color: #89929b; font-size: 12px; }
+.insight-actions a { flex: 0 0 auto; color: #c83e34; text-decoration: none; }
 @media (max-width: 700px) { .billboard-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 900px) { .quote-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 700px) { .detail-page { padding: 18px 12px 28px; } h1 { font-size: 24px; } .quote-grid { grid-template-columns: repeat(2, 1fr); } .quote-grid strong { font-size: 19px; } #detailChart { height: 460px; } }
+@media (max-width: 700px) { .detail-page { padding: 18px 12px 28px; } h1 { font-size: 24px; } .quote-grid { grid-template-columns: repeat(2, 1fr); } .quote-grid strong { font-size: 19px; } #detailChart { height: 460px; } .insight-grid { grid-template-columns: 1fr; } .insight-actions { align-items: flex-start; flex-direction: column; } }
